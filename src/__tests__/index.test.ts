@@ -1,5 +1,5 @@
 import { type GetTimesResult } from 'suncalc';
-import { getPrevNext } from "../index";
+import { getPrevNext, nextTime, onTimes } from "../index";
 
 const makeGetTimes = (now = Date.now()) => {
   return (date: Date, latitude: number, longitude: number): GetTimesResult => ({
@@ -67,3 +67,34 @@ test('Previous and next times in advance', () => {
   expect(prev[0]).toBe('sunsetStart');
   expect(next[0]).toBe('sunset');
 });
+
+test('Next time (zero time difference)', async () => {
+  const getTimes = makeGetTimes();
+  const [name] = await nextTime(0, 0, getTimes, 1000);
+  expect(name).toBe('solarNoon');
+}, 50);
+
+test('Next time (future)', async () => {
+  const getTimes = makeGetTimes();
+  const [name] = await nextTime(0, 0, getTimes, 1001);
+  expect(name).toBe('goldenHour');
+}, 1050);
+
+
+
+
+test('On times (future)', done => {
+  const getTimes = makeGetTimes();
+  const names = [] as string[];
+  const cancel = onTimes(0, 0, getTimes, (name, date) => {
+    names.push(name);
+  }, 5000 - 40); // give 50ms for computation
+  setTimeout(() => {
+    cancel();
+    expect(names.join(",")).toBe('dusk,nauticalDusk,night,nadir');
+  }, 300 + 50);
+  setTimeout(() => {
+    expect(names.length).toBe(4);
+    done();
+  }, 450);
+}, 500);
