@@ -1,4 +1,5 @@
 import { type GetTimesResult } from 'suncalc';
+import { Observable } from 'rxjs';
 
 export type TimeName = keyof GetTimesResult;
 
@@ -98,3 +99,23 @@ export function onTimes(
   }
 }
 
+/**
+ * Making use of the `SunCalc.getTimes` function, creates an observable that streams each sunlight time.
+ * @param latitude Earth geolocation latitude where the times are relevant.
+ * @param longitude Earth geolocation longitude where the times are relevant.
+ * @param getTimes The `SunCalc.getTimes` function (https://github.com/mourner/suncalc#sunlight-times).
+ * @param msInAdvance If callbacks should be called in advance then set a time in milliseconds.
+ * @returns An observable that streams sunlight times.
+ */
+export function observeTimes(
+  latitude: number,
+  longitude: number,
+  getTimes: (date: Date, latitude: number, longitude: number) => GetTimesResult,
+  msInAdvance = 0,
+) {
+  if (!Observable) return null;
+  return new Observable<[TimeName, Date]>(subscriber => {
+    const cancel = onTimes(latitude, longitude, getTimes, (name,date) => subscriber.next([name,date]), msInAdvance);
+    return () => cancel();
+  });
+}

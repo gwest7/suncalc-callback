@@ -64,3 +64,11 @@ const [nextName, nextDate] = next;
 console.log(`Pervious solar noon was at ${prevDate.toTimeString()}`);
 console.log(`Next solar noon will be at ${nextDate.toTimeString()}`);
 ```
+
+Optionally with `rxjs` you can use `observeTimes`.
+
+```js
+observeTimes(lat, lon, getTimes).subscriber(([name,date]) => {
+  console.log(`It is now ${name}`);
+})
+```
