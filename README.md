@@ -28,7 +28,7 @@ while (true) {
 }
 ```
 
-If you need the callback to be called 5 minutes prior to every sunlight event an optional param can be used.
+If you need the callback to be called 5 minutes prior to every sunlight event an optional parameter can be used.
 
 ```js
 onTimes(lat, lon, getTimes, (name, date) => {
@@ -40,7 +40,7 @@ Same for the promise.
 
 ```js
 while (true) {
-  const [name, date] = await nextTime(lat, lon, getTimes);
+  const [name, date] = await nextTime(lat, lon, getTimes, 1000 * 60 * 5);
   console.log(`${name} in 5 min. The time will then be ${date}`);
 }
 ```
@@ -51,6 +51,16 @@ To get the next and previous sunlight events use `getPrevNext`.
 const { prev, next } = getPrevNext(new Date(), lat, lon, getTimes);
 const [prevName, prevDate] = prev;
 const [nextName, nextDate] = next;
-console.log(`${prevName} was at ${prevDate.toTimeString()}`)
-console.log(`${nextName} will be at ${nextDate.toTimeString()}`)
+console.log(`${prevName} was at ${prevDate.toTimeString()}`);
+console.log(`${nextName} will be at ${nextDate.toTimeString()}`);
+```
+
+To filter the sunlight events of `getPrevNext` an optional parameter may be used.
+
+```js
+const { prev, next } = getPrevNext(new Date(), lat, lon, getTimes, ['solarNoon']);
+const [prevName, prevDate] = prev;
+const [nextName, nextDate] = next;
+console.log(`Pervious solar noon was at ${prevDate.toTimeString()}`);
+console.log(`Next solar noon will be at ${nextDate.toTimeString()}`);
 ```

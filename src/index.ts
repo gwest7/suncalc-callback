@@ -85,8 +85,8 @@ export function onTimes(
       try {
         cb( ...next );
       } catch (error) {
-        console.warn('onTimes callback failed:');
-        console.error(error);
+        // console.warn('onTimes callback failed:');
+        // console.error(error);
       }
       setNext();
     }, t + 1); // prevent fast machines from taking less than a millisecond to setup the next timeout
