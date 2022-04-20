@@ -1,6 +1,5 @@
 import { type GetTimesResult } from 'suncalc';
-import { Observable } from 'rxjs';
-import { getPrevNext, nextTime, observeTimes, onTimes } from "../index";
+import { getPrevNext, nextTime, onTimes } from "../index";
 
 const makeGetTimes = (now = Date.now()) => {
   return (date: Date, latitude: number, longitude: number): GetTimesResult => ({
@@ -87,21 +86,6 @@ test('On times (future)', done => {
   const cancel = onTimes(0, 0, getTimes, (name) => names.push(name), 5000 - 40); // give 50ms for computation
   setTimeout(() => {
     cancel();
-    expect(names.join(",")).toBe('dusk,nauticalDusk,night,nadir');
-  }, 300 + 50);
-  setTimeout(() => {
-    expect(names.length).toBe(4);
-    done();
-  }, 450);
-}, 500);
-
-if (Observable) test('Observe times (future)', done => {
-  const getTimes = makeGetTimes();
-  const names = [] as string[];
-  const sub = observeTimes(0, 0, getTimes, 5000 - 40) // give 50ms for computation
-  ?.subscribe(([name, date]) => names.push(name));
-  setTimeout(() => {
-    sub?.unsubscribe();
     expect(names.join(",")).toBe('dusk,nauticalDusk,night,nadir');
   }, 300 + 50);
   setTimeout(() => {

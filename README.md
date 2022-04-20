@@ -65,10 +65,14 @@ console.log(`Pervious solar noon was at ${prevDate.toTimeString()}`);
 console.log(`Next solar noon will be at ${nextDate.toTimeString()}`);
 ```
 
-Optionally with `rxjs` you can use `observeTimes`.
+If you are a fan of `rxjs` an `Observable` can easily be made.
 
 ```js
-observeTimes(lat, lon, getTimes).subscriber(([name,date]) => {
+const $ = new Observable<[TimeName, Date]>(subscriber => {
+  const cancel = onTimes(lat, lon, getTimes, (name,date) => subscriber.next([name,date]), msInAdvance);
+  return () => cancel();
+});
+$.subscriber(([name,date]) => {
   console.log(`It is now ${name}`);
 })
 ```
